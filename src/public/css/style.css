@@ -1,0 +1,66 @@
+.margin {
+    background-color: green;
+}
+.rm-outline
+{
+    outline:none;
+}
+.form-width, .view-photo-div {
+    width: 50%;
+}
+.paragraph-indent {
+    text-indent: 10px;
+}
+
+#success, #failure {
+    justify-content: center;
+    -webkit-transition: opacity 1s linear; 
+    -o-transition: opacity 1s linear; 
+    transition: opacity 1s linear, margin 1s ease, font-size 1s linear, padding 1s ease, border 1s ease;
+    cursor: pointer;
+}
+
+#success.hide_success, #failure.hide_failure {
+    opacity: 0;
+    margin: 0;
+    font-size: 0px;
+    padding: 0;
+    border: 0;
+}
+
+.error-div-width
+{
+    margin-top: 8px;
+    margin-bottom: 0px;
+    width: 50%;
+    -webkit-animation: error-div-width 0.5s ease;
+    animation: error-div-width 0.5s ease;
+}
+
+@keyframes error-div-width
+{
+    0% 
+    {
+        margin-top: 0px;
+    }
+    100%
+    {
+        margin-top: 8px;
+    }
+}
+
+.background-opacity 
+{
+    opacity: 0.8
+}
+
+.btn-black
+{
+    background-color:rgba(0, 0, 0, 0.9)
+}
+.card 
+{
+    -webkit-box-shadow: 11px -11px 4px -10px rgba(0,0,0,0.25);
+    -moz-box-shadow: 11px -11px 4px -10px rgba(0,0,0,0.25);
+    box-shadow: 11px -11px 4px -10px rgba(0,0,0,0.25);
+}
