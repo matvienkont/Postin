@@ -1,13 +1,14 @@
 const express = require('express');
 const router = express.Router();
 const mongoose = require('mongoose');
+const { ensureAuthenticated } = require('../../helpers/auth');
 
 //Load photo model
 require('../models/photoSchema');
 const PostModel = mongoose.model('photo');
 
 // View photos page
-router.get('/', (req, res) => {
+router.get('/', ensureAuthenticated, (req, res) => {
     PostModel.find().then((posts) => {
         posts = posts.sort((a, b) => b.date - a.date);
         return res.render('posts/viewphotos', {
@@ -17,12 +18,12 @@ router.get('/', (req, res) => {
 });
 
 // Add post
-router.get('/add', (req, res) => {
+router.get('/add', ensureAuthenticated, (req, res) => {
     res.render('posts/add');
 });
 
 // Edit post
-router.get('/edit/:id', (req, res) => {
+router.get('/edit/:id', ensureAuthenticated, (req, res) => {
     PostModel.findOne({ _id: req.params.id }).then((post) => {
         res.render('posts/edit', {
             post: post
@@ -31,7 +32,7 @@ router.get('/edit/:id', (req, res) => {
 });
 
 // Update post
-router.put('/:id', (req, res) => {
+router.put('/:id', ensureAuthenticated, (req, res) => {
     /* 
         Post didn't change logic needed
      */
@@ -48,7 +49,7 @@ router.put('/:id', (req, res) => {
 });
 
 //Delete post
-router.delete('/:id', (req, res) => {
+router.delete('/:id', ensureAuthenticated, (req, res) => {
     PostModel.deleteOne({ _id: req.params.id }).then(() => {
         req.flash('success_msg', 'Post successfully deleted!');
         res.redirect('/posts');
@@ -56,7 +57,7 @@ router.delete('/:id', (req, res) => {
 });
 
 //Process form
-router.post('/', (req, res) => {
+router.post('/', ensureAuthenticated, (req, res) => {
     let errors = [];
     if (!req.body.title) errors.push({ textError: 'Required title field is empty' });
     if (!req.body.details) errors.push({ textError: 'Required details field is empty' });
