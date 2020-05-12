@@ -1,3 +1,7 @@
+    <div class="text-center add-another-post" >
+        <a href="/posts/add" class="btn btn-dark btn-lg mb-0 mt-4">let's have another one</a>
+    </div>
+
 {{#each posts}}
     <div class="card card-body mx-auto view-photo-div my-5">
         <h4 class="text-center ">{{title}}</h4>
@@ -14,7 +18,7 @@
     </div>
     
 {{else}}
-    <div class="mx-auto" >
+    <div class="mx-auto text-center" >
         <h3 class="text-center mt-5">No posts yet, mate</h3>
         <a href="/posts/add" class="btn btn-dark btn-lg mb-0 mt-4">Add Post</a>
     </div>
