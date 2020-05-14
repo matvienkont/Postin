@@ -68,7 +68,7 @@ require('../config/passport')(passport);
 
 //Connect to mongoose
 mongoose
-	.connect('mongodb://localhost/photos', {
+	.connect('mongodb+srv://admin:Os1DC9Se7uZBj1qx@picturestorage-vdbvy.mongodb.net/photos?retryWrites=true&w=majority', {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	})

@@ -9,7 +9,8 @@ const PostModel = mongoose.model('photo');
 
 // View photos page
 router.get('/', ensureAuthenticated, (req, res) => {
-    PostModel.find().then((posts) => {
+    PostModel.find({ user: req.user.id })
+    .then((posts) => {
         posts = posts.sort((a, b) => b.date - a.date);
         return res.render('posts/viewphotos', {
             posts: posts
@@ -25,9 +26,16 @@ router.get('/add', ensureAuthenticated, (req, res) => {
 // Edit post
 router.get('/edit/:id', ensureAuthenticated, (req, res) => {
     PostModel.findOne({ _id: req.params.id }).then((post) => {
-        res.render('posts/edit', {
-            post: post
-        });
+        if (post.user != req.user.id) 
+        {
+            req.flash('error_msg', 'Sorry, not authenticated :(');
+            res.redirect('/posts')
+        } else 
+        {
+            res.render('posts/edit', {
+                post: post
+            });
+        }
     });
 });
 
@@ -71,7 +79,8 @@ router.post('/', ensureAuthenticated, (req, res) => {
     } else {
         const newPost = {
             title: req.body.title,
-            details: req.body.details
+            details: req.body.details,
+            user: req.user.id
         };
         new PostModel(newPost).save().then(() => {
             req.flash('success_msg', 'Post successfully added!');
