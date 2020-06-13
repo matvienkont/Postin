@@ -15,6 +15,7 @@ const app = express();
 //Load routes
 const posts = require('./routes/posts');
 const users = require('./routes/users');
+const photos = require('./routes/photos');
 
 //Map global promise - get rid of deprecation message
 mongoose.Promise = global.Promise;
@@ -68,7 +69,7 @@ require('../config/passport')(passport);
 
 //Connect to mongoose
 mongoose
-	.connect('mongodb+srv://admin:Os1DC9Se7uZBj1qx@picturestorage-vdbvy.mongodb.net/photos?retryWrites=true&w=majority', {
+	.connect('mongodb://localhost:27017/photos', {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	})
@@ -83,7 +84,7 @@ app.listen(port, () => {
 
 //Base page
 app.get('/', (req, res) => {
-	const text = 'Picka';
+	const text = 'Postin';
 	res.render('index', { text: text });
 });
 
@@ -97,3 +98,6 @@ app.use('/posts', posts);
 
 //Use users.js export module to /users route
 app.use('/users', users);
+
+//Use users.js export module to /photos route
+app.use('/photos', photos);

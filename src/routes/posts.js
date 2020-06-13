@@ -3,11 +3,11 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const { ensureAuthenticated } = require('../../helpers/auth');
 
-//Load photo model
-require('../models/photoSchema');
-const PostModel = mongoose.model('photo');
+//Load post model
+require('../models/postSchema');
+const PostModel = mongoose.model('post');
 
-// View photos page
+// View posts page
 router.get('/', ensureAuthenticated, (req, res) => {
     PostModel.find({ user: req.user.id })
     .then((posts) => {
