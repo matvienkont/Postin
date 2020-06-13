@@ -3,6 +3,11 @@ const router = express.Router();
 const multer  = require('multer');
 const fs = require('fs-extra');
 const path = require('path');
+const mongoose = require('mongoose');
+
+//Load photo model
+require('../models/photoSchema');
+const photoModel = mongoose.model('photo');
 
 let UPLOAD_LOCATION = path.join(__dirname, '../../photoset');
 fs.mkdirsSync(UPLOAD_LOCATION);
@@ -88,6 +93,7 @@ router.post('/', function (req, res, next)
 
 router.post('/', (req, res) =>
 {
+
     console.log("Middleware to post to db");
     res.redirect('/photos');
         /*const newPhoto = {

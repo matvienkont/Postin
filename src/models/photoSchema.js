@@ -5,8 +5,11 @@ const photoSchema = new Schema({
 	title: {
 		type: String,
 		required: true
-    },
-    
+	},
+	imgLocation: {
+		type: String,
+		required: true
+	},
 	user: {
 		type: String,
 		required: true
@@ -17,4 +20,4 @@ const photoSchema = new Schema({
 	}
 });
 
-mongoose.model('post', postSchema);
+mongoose.model('photo', photoSchema);
