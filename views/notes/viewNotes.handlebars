@@ -1,0 +1,25 @@
+    <div class="text-center add-another-note" >
+        <a href="/notes/add" class="btn btn-dark btn-lg mb-0 mt-4">let's have another note</a>
+    </div>
+
+{{#each notes}}
+    <div class="card card-body mx-auto my-5 notes-width">
+        <h4 class="text-center ">{{title}}</h4>
+        <div class="card card-body mb-3 p-3">
+            <p class="paragraph-indent p-0 m-0">{{details}}</p>
+        </div> 
+        <a href="/notes/edit/{{id}}" class="btn btn-dark btn-block background-opacity">Edit</a>
+        <form action="/notes/{{id}}?_method=DELETE" method="POST">
+            <input type="hidden" name="_method" value="DELETE">
+            <button class="btn btn-submit btn-danger btn-block mt-2">
+                Delete
+            </button>    
+        </form>
+    </div>
+    
+{{else}}
+    <div class="mx-auto text-center" >
+        <h3 class="text-center mt-5">No notes yet, mate</h3>
+        <a href="/notes/add" class="btn btn-dark btn-lg mb-0 mt-4">Add Note</a>
+    </div>
+{{/each}}

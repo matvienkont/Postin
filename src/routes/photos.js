@@ -4,13 +4,17 @@ const multer  = require('multer');
 const fs = require('fs-extra');
 const path = require('path');
 const mongoose = require('mongoose');
+const { ensureAuthenticated } = require('../../helpers/auth');
+
+
 
 //Load photo model
 require('../models/photoSchema');
-const photoModel = mongoose.model('photo');
+const PhotoModel = mongoose.model('photo');
 
-let UPLOAD_LOCATION = path.join(__dirname, '../../photoset');
+let UPLOAD_LOCATION = 'src/public/photoset';
 fs.mkdirsSync(UPLOAD_LOCATION);
+
 
 //optins for multer package: store photos on disk, unique names, filter file which size more than 1kb or not png/jpeg/jpg
 var options =   { 
@@ -22,6 +26,8 @@ var options =   {
                         },
                         filename: (req, file, callback) => 
                         {
+                            let extension = "." + file.mimetype.split("/")[1];
+                            req.uniqueName += extension;
                             callback(null, req.uniqueName)
                         }
                     }),
@@ -29,61 +35,67 @@ var options =   {
                     fileFilter: (req, file, callback) =>
                     {    
                         var ext = file.mimetype;
-                        if(ext !== 'image/png' && ext !== 'image/jpeg') 
+                        if(ext !== "image/png" && ext !== "image/jpeg" && ext !== "image/jpg") 
                         {
-                            return callback(new Error('Only images are allowed'));
+                            return callback(new Error("Only images are allowed"));
                         }
                         callback(null, true);
                     },
-                    limits: { fileSize: 1000000 }
+                    limits: { fileSize: 1500000 }
                 };
                 
-var upload = multer(options).single('inputPhoto');
+var upload = multer(options).single("inputPhoto");
                 
-router.post('/', function (req, res, next) 
+router.post('/add', ensureAuthenticated, function (req, res, next) 
 {   
-    req.uniqueName = 'inputPhoto-'+Date.now() + '-' + Math.round(Math.random() * 1E9);
-
+    let prefix = "inputPhoto-";
+    req.uniqueName = prefix+Date.now() + "-" + Math.round(Math.random() * 1E9);
     upload(req, res, function(err) 
     {
         if (err instanceof multer.MulterError) 
         {
-            req.flash('error_msg', 'Photo is too large, mate (1mb - is top) !');
-            res.redirect('/photos');
-        } if(err instanceof Error)
+            req.flash("error_msg", "Photo is too large, mate (1mb - is top) !");
+            res.redirect("/photos/add");
+        } else if(!req.file) 
         {
-            req.flash('error_msg', 'Only png/jpg/jpeg are allowed');
-            res.redirect('/photos');
-        } else 
-        {
-            next();
-        }
+            req.flash("error_msg", "Choose a photo, please");
+            res.redirect("/photos/add");
+        } else if(err instanceof Error)
+            {
+                req.flash("error_msg", "Only png/jpg/jpeg are allowed");
+                res.redirect("/photos/add");
+            } else 
+            {
+                next();
+            }
 
     });
     
 });
 
-router.post('/', function (req, res, next) 
+router.post('/add', ensureAuthenticated, function (req, res, next) 
 {
-    var mmm = require('mmmagic'),
+    var mmm = require("mmmagic"),
     Magic = mmm.Magic;
 
     let magic = new Magic(mmm.MAGIC_MIME_TYPE);
-    let fileNameWithLocation = path.join(UPLOAD_LOCATION, req.uniqueName);
-
-    magic.detectFile(fileNameWithLocation, function (err, mimeType) 
+    PHOTO_DIR = "../public/photoset";
+    req.fileNameWithLocation = path.join(__dirname, PHOTO_DIR, req.uniqueName);
+    magic.detectFile(req.fileNameWithLocation, function (err, mimeType) 
     {
-        const ALLOWED_TYPES = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png'
-        ];
+        //if(err) throw err;
 
-        if(!ALLOWED_TYPES.includes(mimeType))
+        const ALLOWED_TYPES = [
+            "image/jpeg",
+            "image/jpg",
+            "image/png"
+        ];
+ 
+        if(!(ALLOWED_TYPES.includes(mimeType)))
         {
-            fs.unlink(fileNameWithLocation);
-            req.flash('error_msg', 'Only png/jpg/jpeg are allowed');
-            res.redirect('/photos');
+            fs.unlink(req.fileNameWithLocation);
+            req.flash("error_msg", "Only png/jpg/jpeg are allowed");
+            res.redirect("/photos");
         } else 
         {
             next();    
@@ -91,25 +103,38 @@ router.post('/', function (req, res, next)
     });
 });
 
-router.post('/', (req, res) =>
+router.post('/add', ensureAuthenticated, (req, res) =>
 {
+    let pathToFile = "./photoset/"+req.uniqueName;
+    const newPhoto = {
+        title: req.body.title,
+        imgLocation: pathToFile,
+        user: req.user.id
+    };
+    new PhotoModel(newPhoto).save().then(() => {
+        req.flash('success_msg', 'Post successfully added!');
+    });
 
-    console.log("Middleware to post to db");
-    res.redirect('/photos');
-        /*const newPhoto = {
-            title: req.body.title,
-            details: req.body.details,
-            user: req.user.id
-        };
-        new PostModel(newPost).save().then(() => {
-            req.flash('success_msg', 'Post successfully added!');
-            res.redirect('/posts');
-        });*/
+    res.redirect("/photos");
 });
 
-router.get('/', (req, res) => 
+//Get photo form
+router.get('/add', ensureAuthenticated, (req, res) => 
 {
-    res.render('photos/photos');
+    res.render("photos/add_photos");
 })
+
+// View photos page
+router.get('/', ensureAuthenticated, (req, res) => 
+{
+    PhotoModel.find({ user: req.user.id })
+    .then((photos) => 
+    {
+        photos = photos.sort((a, b) => b.date - a.date);
+        return res.render('photos/viewPhotos', {
+            photos: photos
+        });
+    });
+});
 
 module.exports = router;

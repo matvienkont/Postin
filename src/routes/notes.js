@@ -3,64 +3,64 @@ const router = express.Router();
 const mongoose = require('mongoose');
 const { ensureAuthenticated } = require('../../helpers/auth');
 
-//Load post model
-require('../models/postSchema');
-const PostModel = mongoose.model('post');
+//Load note model
+require('../models/noteSchema');
+const NoteModel = mongoose.model('note');
 
-// View posts page
+// View notes page
 router.get('/', ensureAuthenticated, (req, res) => {
-    PostModel.find({ user: req.user.id })
-    .then((posts) => {
-        posts = posts.sort((a, b) => b.date - a.date);
-        return res.render('posts/viewphotos', {
-            posts: posts
+    NoteModel.find({ user: req.user.id })
+    .then((notes) => {
+        notes = notes.sort((a, b) => b.date - a.date);
+        return res.render('notes/viewNotes', {
+            notes: notes
         });
     });
 });
 
-// Add post
+// Add note
 router.get('/add', ensureAuthenticated, (req, res) => {
-    res.render('posts/add');
+    res.render('notes/add');
 });
 
-// Edit post
+// Edit note
 router.get('/edit/:id', ensureAuthenticated, (req, res) => {
-    PostModel.findOne({ _id: req.params.id }).then((post) => {
-        if (post.user != req.user.id) 
+    NoteModel.findOne({ _id: req.params.id }).then((note) => {
+        if (note.user != req.user.id) 
         {
             req.flash('error_msg', 'Sorry, not authenticated :(');
-            res.redirect('/posts')
+            res.redirect('/notes')
         } else 
         {
-            res.render('posts/edit', {
-                post: post
+            res.render('notes/edit', {
+                note: note
             });
         }
     });
 });
 
-// Update post
+// Update note
 router.put('/:id', ensureAuthenticated, (req, res) => {
     /* 
-        Post didn't change logic needed
+        note didn't change logic needed
      */
-    PostModel.findOne({ _id: req.params.id }).then((post) => 
+    NoteModel.findOne({ _id: req.params.id }).then((note) => 
     {
-        post.title = req.body.title;
-        post.details = req.body.details;
-        post.save(); 
+        note.title = req.body.title;
+        note.details = req.body.details;
+        note.save(); 
     })
     .then(() => {
-            req.flash('success_msg', 'Post successfully updated!');
-            res.redirect('/posts')
+            req.flash('success_msg', 'Note successfully updated!');
+            res.redirect('/notes')
         });
 });
 
-//Delete post
+//Delete note
 router.delete('/:id', ensureAuthenticated, (req, res) => {
-    PostModel.deleteOne({ _id: req.params.id }).then(() => {
-        req.flash('success_msg', 'Post successfully deleted!');
-        res.redirect('/posts');
+    NoteModel.deleteOne({ _id: req.params.id }).then(() => {
+        req.flash('success_msg', 'Note successfully deleted!');
+        res.redirect('/notes');
     })
 });
 
@@ -71,20 +71,20 @@ router.post('/', ensureAuthenticated, (req, res) => {
     if (!req.body.details) errors.push({ textError: 'Required details field is empty' });
 
     if (errors.length > 0) {
-        res.render('posts/add', {
+        res.render('notes/add', {
             errors: errors,
             title: req.body.title,
             details: req.body.details
         });
     } else {
-        const newPost = {
+        const newNote = {
             title: req.body.title,
             details: req.body.details,
             user: req.user.id
         };
-        new PostModel(newPost).save().then(() => {
-            req.flash('success_msg', 'Post successfully added!');
-            res.redirect('/posts');
+        new NoteModel(newNote).save().then(() => {
+            req.flash('success_msg', 'Note successfully added!');
+            res.redirect('/notes');
         });
     }
 });

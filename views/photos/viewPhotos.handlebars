@@ -1,0 +1,26 @@
+    <div class="text-center add-another-note" >
+        <a href="/photos/add" class="btn btn-dark btn-lg mb-0 mt-4">post another photo</a>
+    </div>
+
+
+{{#each photos}}
+    <div class="mx-auto view-photo-div my-5">
+    <h4 class="text-center ">{{title}}</h4>
+        <div class="position-relative">
+            <div class="padding-for-imgs" ></div>
+            <div class="w-100">
+                <div class="position-absolute w-100 position-0">
+                    <div class="position-absolute w-100 position-0">
+                        <img class="img-position position-0" src="{{imgLocation}}" /> 
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+{{else}}
+    <div class="mx-auto text-center" >
+        <h3 class="text-center mt-5">There is no photos yet</h3>
+        <a href="/photos/add" class="btn btn-dark btn-lg mb-0 mt-4">Add Photo</a>
+    </div>
+{{/each}}

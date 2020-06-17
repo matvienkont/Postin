@@ -13,7 +13,7 @@ const passport = require('passport');
 const app = express();
 
 //Load routes
-const posts = require('./routes/posts');
+const notes = require('./routes/notes');
 const users = require('./routes/users');
 const photos = require('./routes/photos');
 
@@ -69,7 +69,7 @@ require('../config/passport')(passport);
 
 //Connect to mongoose
 mongoose
-	.connect('mongodb://localhost:27017/photos', {
+	.connect('mongodb://localhost:27017/posts', {
 		useNewUrlParser: true,
 		useUnifiedTopology: true
 	})
@@ -93,8 +93,8 @@ app.get('/about', (req, res) => {
 	res.render('about');
 });
 
-//Use posts.js export module to /posts route
-app.use('/posts', posts);
+//Use notes.js export module to /notes route
+app.use('/notes', notes);
 
 //Use users.js export module to /users route
 app.use('/users', users);
