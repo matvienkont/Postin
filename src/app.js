@@ -20,14 +20,24 @@ const photos = require('./routes/photos');
 //Map global promise - get rid of deprecation message
 mongoose.Promise = global.Promise;
 
+app.set('view engine', 'handlebars');
+
 //Handlebars Middleware
 app.engine(
 	'handlebars',
 	exphbs({
-		handlebars: allowInsecurePrototypeAccess(Handlebars)
+		handlebars: allowInsecurePrototypeAccess(Handlebars),
+		helpers: {
+			json: function(obj) {
+				return new Handlebars.SafeString(JSON.stringify(obj))
+			 },
+			string: function(text) {
+				return new Handlebars.SafeString(text);
+			}
+		}
 	})
 );
-app.set('view engine', 'handlebars');
+
 
 //Middleware for PUT || DELETE methods
 app.use(methodOverride('_method'));

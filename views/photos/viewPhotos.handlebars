@@ -2,10 +2,21 @@
         <a href="/photos/add" class="btn btn-dark btn-lg mb-0 mt-4">post another photo</a>
     </div>
 
-
 {{#each photos}}
     <div class="mx-auto view-photo-div my-5">
-    <h4 class="text-center ">{{title}}</h4>
+    <h4 class="text-center photo-title">{{title}}</h4>
+    <form method="post" action='/photos/{{_id}}?_method=PUT' class="not-displayed">
+    <input type="hidden" name="_method" value="PUT">
+        <div class="input-group mb-3">
+        <input type="text" class="form-control photo-title-input" name="title" value="{{title}}" aria-describedby="basic-addon2" required >
+        <div class="input-group-append">
+            <button class="btn btn-submit btn-dark">
+            Submit
+            </button>
+        </div>
+        </div>
+    </form>
+
         <div class="position-relative">
             <div class="padding-for-imgs" ></div>
             <div class="w-100">
@@ -16,6 +27,13 @@
                 </div>
             </div>
         </div>
+        <button onclick="startEditing('{{{id}}}')" class="btn btn-dark btn-block background-opacity mt-2 edit-button text-color">Edit Title</button>
+        <form action="/photos/{{id}}?_method=DELETE" method="POST" class="form-zero-margin">
+            <input type="hidden" name="_method" value="DELETE">
+            <button class="btn btn-submit btn-danger btn-block mt-2">
+                Delete
+            </button>    
+        </form>
     </div>
     
 {{else}}
@@ -24,3 +42,9 @@
         <a href="/photos/add" class="btn btn-dark btn-lg mb-0 mt-4">Add Photo</a>
     </div>
 {{/each}}
+
+<!--Use handlabar helper to get object - photos-->
+<script>
+    window.unitList = {{json photos}};
+</script>
+<script type="text/javascript" src="/event-handlers.js/change-photo-title.js"></script>

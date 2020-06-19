@@ -137,4 +137,49 @@ router.get('/', ensureAuthenticated, (req, res) =>
     });
 });
 
+//Delete photo
+router.delete('/:id', ensureAuthenticated, (req, res) => {
+    PhotoModel.deleteOne({ _id: req.params.id }).then(() => {
+        req.flash('success_msg', 'Photo successfully deleted!');
+        res.redirect('/photos');
+    })
+});
+
+//Edit photo title
+router.put('/:id', ensureAuthenticated, (req, res) => {
+    console.log(req.params.top);
+    
+    if(!req.body.title)
+    {
+        req.flash('error_msg', 'A title shouldn\'t be empty, no update happened');
+        return res.redirect('/photos')
+    } else 
+    {
+        PhotoModel.findOne({ _id: req.params.id }).then((photo) => 
+        {
+            if(photo.title == req.body.title)
+            {
+                return 0; 
+            } else 
+            {
+                photo.title = req.body.title;
+                photo.save(); 
+                return 1;
+            }
+        })
+        .then((success) => {
+            if (success) {
+                req.flash('success_msg', 'The title successfully updated!');
+                res.redirect('/photos');
+            } else 
+            {
+                req.flash('success_msg', 'Nothing to update!');
+                res.redirect('/photos');   
+            }
+                
+            });
+    }
+});
+
+
 module.exports = router;

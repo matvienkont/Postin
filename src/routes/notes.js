@@ -41,19 +41,43 @@ router.get('/edit/:id', ensureAuthenticated, (req, res) => {
 
 // Update note
 router.put('/:id', ensureAuthenticated, (req, res) => {
-    /* 
-        note didn't change logic needed
-     */
-    NoteModel.findOne({ _id: req.params.id }).then((note) => 
+    
+    if(!req.body.title)
     {
-        note.title = req.body.title;
-        note.details = req.body.details;
-        note.save(); 
-    })
-    .then(() => {
-            req.flash('success_msg', 'Note successfully updated!');
-            res.redirect('/notes')
-        });
+        req.flash('error_msg', 'A title shouldn\'t be empty, no update happened');
+        return res.redirect('/notes')
+    } else if(!req.body.details)
+        {
+            req.flash('error_msg', 'A details field shouldn\'t be empty, no update happened');
+            return res.redirect('/notes')
+        } else 
+        {
+            NoteModel.findOne({ _id: req.params.id }).then((note) => 
+            {
+                if(note.title == req.body.title && note.details == req.body.details)
+                {
+                    return 0;
+                } else 
+                {
+                    note.title = req.body.title;
+                    note.details = req.body.details;
+                    note.save();
+                    return 1;
+                } 
+            })
+            .then((success) => {
+                if(success) 
+                {
+                    req.flash('success_msg', 'Note successfully updated!');
+                    res.redirect('/notes')
+                } else 
+                {
+                    req.flash('success_msg', 'Nothing to change!');
+                    res.redirect('/notes')
+                }
+
+            });
+        }
 });
 
 //Delete note

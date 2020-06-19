@@ -227,3 +227,33 @@
 .notes-width {
     width: 50%;
 }
+
+.form-zero-margin {
+    margin: 0;
+}
+
+div > .text-color {
+    color: white;
+}
+
+.not-displayed {
+    display: none;
+}
+
+.input-group-prepend {
+    position: absolute;
+    right: 6px;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.full-opacity {
+    opacity: 1;
+}
+
+.photo-title-input:focus
+{
+    border: 2px solid burlywood;
+    -webkit-box-shadow: none;
+    box-shadow: none;
+}
