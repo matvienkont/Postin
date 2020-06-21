@@ -14,9 +14,13 @@ const noteSchema = new Schema({
 		type: String,
 		required: true
 	},
+	isPhoto: {
+		type: Boolean,
+		required: true
+	},
 	date: {
 		type: Date,
-		default: Date.now()
+		default: Date.now
 	}
 });
 

@@ -30,7 +30,7 @@ router.post('/login', (req, res, next) => {
     else
     {
         passport.authenticate('local', { 
-            successRedirect: '/notes',
+            successRedirect: '/posts',
             failureRedirect: '/users/login',
             failureFlash: true
         })(req, res, next)

@@ -104,7 +104,8 @@ router.post('/', ensureAuthenticated, (req, res) => {
         const newNote = {
             title: req.body.title,
             details: req.body.details,
-            user: req.user.id
+            user: req.user.id,
+            isPhoto: false
         };
         new NoteModel(newNote).save().then(() => {
             req.flash('success_msg', 'Note successfully added!');

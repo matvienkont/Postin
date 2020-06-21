@@ -12,10 +12,6 @@ const passport = require('passport');
 
 const app = express();
 
-//Load routes
-const notes = require('./routes/notes');
-const users = require('./routes/users');
-const photos = require('./routes/photos');
 
 //Map global promise - get rid of deprecation message
 mongoose.Promise = global.Promise;
@@ -31,9 +27,12 @@ app.engine(
 			json: function(obj) {
 				return new Handlebars.SafeString(JSON.stringify(obj))
 			 },
-			string: function(text) {
-				return new Handlebars.SafeString(text);
-			}
+			ifEq: function(v1, v2, options) {
+				if(v1 === v2) {
+				  return options.fn(this);
+				}
+				return options.inverse(this);
+			  }
 		}
 	})
 );
@@ -46,7 +45,7 @@ app.use(methodOverride('_method'));
 app.use(express.static(path.join(__dirname, '/public')));
 
 //Body Parser middleware
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 //Express session middleware
@@ -57,6 +56,12 @@ app.use(
 		saveUninitialized: true,
 	})
 );
+
+//Load routes
+const notes = require('./routes/notes');
+const users = require('./routes/users');
+const photos = require('./routes/photos');
+const posts = require('./routes/posts');
 	
 //Passport middleware to serialize session (assign and retrieve identification)
 app.use(passport.initialize());
@@ -111,3 +116,6 @@ app.use('/users', users);
 
 //Use users.js export module to /photos route
 app.use('/photos', photos);
+
+//Use users.js export module to /photos route
+app.use('/posts', posts);

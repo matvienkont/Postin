@@ -48,28 +48,36 @@ var upload = multer(options).single("inputPhoto");
                 
 router.post('/add', ensureAuthenticated, function (req, res, next) 
 {   
-    let prefix = "inputPhoto-";
+    var prefix = "inputPhoto-"; 
     req.uniqueName = prefix+Date.now() + "-" + Math.round(Math.random() * 1E9);
-    upload(req, res, function(err) 
-    {
-        if (err instanceof multer.MulterError) 
+        upload(req, res, function(err) 
         {
-            req.flash("error_msg", "Photo is too large, mate (1mb - is top) !");
-            res.redirect("/photos/add");
-        } else if(!req.file) 
-        {
-            req.flash("error_msg", "Choose a photo, please");
-            res.redirect("/photos/add");
-        } else if(err instanceof Error)
+            
+            console.log(req.body);
+            if(!req.body.title)
             {
-                req.flash("error_msg", "Only png/jpg/jpeg are allowed");
+                req.flash("error_msg", "A title is a must");
                 res.redirect("/photos/add");
-            } else 
-            {
-                next();
-            }
-
-    });
+            } else if (err instanceof multer.MulterError) 
+                {
+                    req.flash("error_msg", "Photo is too large, mate (1mb - is top) !");
+                    res.redirect("/photos/add");
+                } else if(!req.file) 
+                {
+                    req.flash("error_msg", "Choose a photo, please");
+                    res.redirect("/photos/add");
+                } else if(err instanceof Error)
+                    {
+                        console.log("Error HERE");
+                        req.flash("error_msg", "Only png/jpg/jpeg are allowed");
+                        res.redirect("/photos/add");
+                    } else 
+                    {
+                        
+                        next();
+                    }
+                
+        });
     
 });
 
@@ -90,7 +98,7 @@ router.post('/add', ensureAuthenticated, function (req, res, next)
             "image/jpg",
             "image/png"
         ];
- 
+        
         if(!(ALLOWED_TYPES.includes(mimeType)))
         {
             fs.unlink(req.fileNameWithLocation);
@@ -109,7 +117,8 @@ router.post('/add', ensureAuthenticated, (req, res) =>
     const newPhoto = {
         title: req.body.title,
         imgLocation: pathToFile,
-        user: req.user.id
+        user: req.user.id,
+        isPhoto: true
     };
     new PhotoModel(newPhoto).save().then(() => {
         req.flash('success_msg', 'Post successfully added!');
@@ -147,7 +156,6 @@ router.delete('/:id', ensureAuthenticated, (req, res) => {
 
 //Edit photo title
 router.put('/:id', ensureAuthenticated, (req, res) => {
-    console.log(req.params.top);
     
     if(!req.body.title)
     {

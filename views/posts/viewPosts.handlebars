@@ -1,0 +1,39 @@
+<div class="text-center add-another-note" >
+    <a href="/notes/add" class="btn btn-dark btn-sm mb-0 d-block mb-2">Add Note</a>
+    <a href="/photos/add" class="btn btn-dark btn-sm mb-0 d-block" id="index_add_photo_button">Add Photo</a>
+</div>
+
+{{#each posts}}
+
+    {{#ifEq isPhoto true}}
+        <div class="mx-auto view-photo-div my-5">
+        <h4 class="text-center photo-title">{{title}}</h4>
+
+            <div class="position-relative">
+                <div class="padding-for-imgs" ></div>
+                <div class="w-100">
+                    <div class="position-absolute w-100 position-0">
+                        <div class="position-absolute w-100 position-0">
+                            <img class="img-position position-0" src="{{imgLocation}}" /> 
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {{else}}
+
+            <div class="card card-body mx-auto my-5 notes-width">
+                <h4 class="text-center ">{{title}}</h4>
+                <div class="card card-body mb-3 p-3">
+                    <p class="paragraph-indent p-0 m-0">{{details}}</p>
+                </div> 
+            </div>
+    {{/ifEq}}
+    
+    {{else}}
+        <div class="mx-auto text-center" >
+            <h3 class="text-center mt-5">No posts yet, mate</h3>
+                <a href="/notes/add" class="btn btn-dark btn-lg mb-0">Add Note</a>
+                <a href="/photos/add" class="btn btn-dark btn-lg mb-0" id="index_add_photo_button">Add Photo</a>
+    </div>
+{{/each}}
